@@ -1,6 +1,6 @@
 use std::{
     fmt::{self, Debug},
-    ops::{AddAssign, MulAssign, SubAssign},
+    ops::{AddAssign, Index, IndexMut, MulAssign, SubAssign},
     slice::Iter,
 };
 
@@ -71,6 +71,24 @@ impl<
     }
 }
 
+impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Index<usize>
+    for Matrix<K>
+{
+    type Output = Vec<K>;
+
+    fn index<'a>(&'a self, i: usize) -> &Vec<K> {
+        &self.elements[i]
+    }
+}
+
+impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> IndexMut<usize>
+    for Matrix<K>
+{
+    fn index_mut<'a>(&'a mut self, i: usize) -> &mut Vec<K> {
+        &mut self.elements[i]
+    }
+}
+
 // *< From
 
 // *> Iterator
@@ -106,7 +124,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iter
             self.current_row += 1;
         }
 
-        Some(self.matrix.elements[row][column])
+        Some(self.matrix[row][column])
     }
 }
 
@@ -142,10 +160,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iter
             self.current_column += 1;
         }
 
-        Some([
-            self.matrix_a.elements[row][column],
-            self.matrix_b.elements[row][column],
-        ])
+        Some([self.matrix_a[row][column], self.matrix_b[row][column]])
     }
 }
 
@@ -170,7 +185,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matr
             elements: vec![vec![K::default(); size]; size],
         };
         for diagonal in 0..size {
-            matrix.elements[diagonal][diagonal] = value
+            matrix[diagonal][diagonal] = value
         }
         matrix
     }
@@ -258,8 +273,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matr
         let mut new_matrix = Matrix::new(a_shape);
         for row in 0..a_shape[0] {
             for column in 0..a_shape[1] {
-                new_matrix.elements[row][column] =
-                    callback(a.elements[row][column], b.elements[row][column]);
+                new_matrix[row][column] = callback(a[row][column], b[row][column]);
             }
         }
 
@@ -277,7 +291,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matr
 
         for row in 0..shape[0] {
             for column in 0..shape[1] {
-                self.elements[row][column] += b.elements[row][column];
+                self[row][column] += b[row][column];
             }
         }
 
@@ -293,7 +307,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matr
 
         for row in 0..shape[0] {
             for column in 0..shape[1] {
-                self.elements[row][column] -= b.elements[row][column];
+                self[row][column] -= b[row][column];
             }
         }
 
@@ -305,7 +319,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matr
         let shape = self.shape();
         for row in 0..shape[0] {
             for column in 0..shape[1] {
-                self.elements[row][column] *= value;
+                self[row][column] *= value;
             }
         }
     }

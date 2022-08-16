@@ -1,41 +1,133 @@
 use crate::matrix::Matrix;
 use std::{
     fmt::{self, Debug},
-    ops::{AddAssign, MulAssign, SubAssign},
+    ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
     slice::Iter,
 };
 
 #[derive(Debug)]
-pub struct Vector<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> {
+pub struct Vector<
+    K: Default
+        + Clone
+        + Copy
+        + Debug
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + Add<Output = K>
+        + Sub<Output = K>
+        + Mul<Output = K>,
+> {
     elements: Vec<K>,
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> fmt::Display
-    for Vector<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > fmt::Display for Vector<K>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self.elements)
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Default for Vector<K> {
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Default for Vector<K>
+{
     fn default() -> Self {
         Self::new(0)
     }
 }
 
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Index<usize> for Vector<K>
+{
+    type Output = K;
+
+    fn index<'a>(&'a self, i: usize) -> &'a K {
+        &self.elements[i]
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > IndexMut<usize> for Vector<K>
+{
+    fn index_mut<'a>(&'a mut self, i: usize) -> &'a mut K {
+        &mut self.elements[i]
+    }
+}
+
 // *> From
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> From<Vec<K>>
-    for Vector<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > From<Vec<K>> for Vector<K>
 {
     fn from(vec: Vec<K>) -> Self {
         Vector { elements: vec }
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign, const N: usize>
-    From<[K; N]> for Vector<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+        const N: usize,
+    > From<[K; N]> for Vector<K>
 {
     fn from(slice: [K; N]) -> Self {
         Vector {
@@ -48,16 +140,37 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign, cons
 
 // *> Iterator
 
-pub struct TupleIterator<'a, K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign>
-{
+pub struct TupleIterator<
+    'a,
+    K: Default
+        + Clone
+        + Copy
+        + Debug
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + Add<Output = K>
+        + Sub<Output = K>
+        + Mul<Output = K>,
+> {
     vector_a: &'a Vector<K>,
     vector_b: &'a Vector<K>,
     size: usize,
     current_column: usize,
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iterator
-    for TupleIterator<'_, K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Iterator for TupleIterator<'_, K>
 {
     type Item = [K; 2];
 
@@ -71,16 +184,25 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iter
 
         let column = self.current_column;
         self.current_column += 1;
-        Some([
-            self.vector_a.elements[column],
-            self.vector_b.elements[column],
-        ])
+        Some([self.vector_a[column], self.vector_b[column]])
     }
 }
 
 // *< Iterator
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vector<K> {
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Vector<K>
+{
     pub fn new(size: usize) -> Vector<K> {
         Vector {
             elements: vec![K::default(); size],
@@ -164,11 +286,14 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
 
     // Apply a function on each of the elements of the vector and return a new vector with the function applied
     #[allow(dead_code)]
-    pub fn map<'a>(&'a self, callback: fn(value: K) -> K) -> Result<Vector<K>, String> {
+    pub fn map<'a>(
+        &'a self,
+        callback: fn(index: usize, value: K) -> K,
+    ) -> Result<Vector<K>, String> {
         let size = self.size();
         let mut new_vector = Vector::new(size);
         for column in 0..size {
-            new_vector.elements[column] = callback(self.elements[column]);
+            new_vector[column] = callback(column, self[column]);
         }
 
         Ok(new_vector)
@@ -179,7 +304,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
     pub fn map_tuple<'a>(
         a: &'a Vector<K>,
         b: &'a Vector<K>,
-        callback: fn(a: K, b: K) -> K,
+        callback: fn(index: usize, a: K, b: K) -> K,
     ) -> Result<Vector<K>, String> {
         let a_size = a.size();
         if a_size != b.size() {
@@ -188,7 +313,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
 
         let mut new_vector = Vector::new(a_size);
         for column in 0..a_size {
-            new_vector.elements[column] = callback(a.elements[column], b.elements[column]);
+            new_vector[column] = callback(column, a[column], b[column]);
         }
 
         Ok(new_vector)
@@ -204,7 +329,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
         }
 
         for column in 0..size {
-            self.elements[column] += b.elements[column]
+            self[column] += b[column]
         }
 
         Ok(())
@@ -218,7 +343,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
         }
 
         for column in 0..size {
-            self.elements[column] -= b.elements[column]
+            self[column] -= b[column]
         }
 
         Ok(())
@@ -228,7 +353,7 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Vect
     pub fn scl(&mut self, value: K) {
         let size = self.size();
         for column in 0..size {
-            self.elements[column] *= value
+            self[column] *= value
         }
     }
 }
