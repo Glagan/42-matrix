@@ -465,4 +465,18 @@ impl<
             self[column] *= value
         }
     }
+
+    #[allow(dead_code)]
+    pub fn dot(&self, b: Vector<K>) -> K {
+        let size = self.size();
+        if size != b.size() {
+            return K::default();
+        }
+
+        let mut result = K::default();
+        for index in 0..size {
+            result += self[index] * b[index];
+        }
+        result
+    }
 }

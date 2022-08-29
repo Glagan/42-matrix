@@ -7,14 +7,15 @@ pub mod vector;
 
 fn main() {
     // *
+    println!("\nVector constructors\n");
 
-    let vec: Vector<f64> = Vector::new(4);
+    let vec = Vector::<f64>::new(4);
     println!("vec: {} (shape: {:#?})", vec, vec.shape());
-    let vec: Vector<f64> = Vector::from(vec![1., 2., 3., 4.]);
+    let vec = Vector::from(vec![1., 2., 3., 4.]);
     println!("vec: {} (shape: {:#?})", vec, vec.shape());
-    let vec: Vector<f64> = Vector::from([1., 2., 3., 4.]);
+    let vec = Vector::from([1., 2., 3., 4.]);
     println!("vec: {} (shape: {:#?})", vec, vec.shape());
-    let vec: Vector<f64> = Vector::from([1., 2., 3., 4.]);
+    let vec = Vector::from([1., 2., 3., 4.]);
     println!(
         "vec-to-mat: {} (shape: {:#?})",
         vec.reshape(),
@@ -22,16 +23,17 @@ fn main() {
     );
 
     // *
+    println!("\nMatrix constructors\n");
 
-    let matrix: Matrix<f64> = Matrix::new([4, 4]);
+    let matrix = Matrix::<f64>::new([4, 4]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
-    let matrix: Matrix<f64> = Matrix::from(vec![1., 2., 3., 4., 5., 6.]);
+    let matrix = Matrix::from(vec![1., 2., 3., 4., 5., 6.]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
-    let matrix: Matrix<f64> = Matrix::from(vec![vec![1., 2., 3.], vec![4., 5., 6.]]);
+    let matrix = Matrix::from(vec![vec![1., 2., 3.], vec![4., 5., 6.]]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
-    let matrix: Matrix<f64> = Matrix::from([[1., 2., 3.], [4., 5., 6.]]);
+    let matrix = Matrix::from([[1., 2., 3.], [4., 5., 6.]]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
-    let matrix: Matrix<f64> = Matrix::identity(4, 1.);
+    let matrix = Matrix::identity(4, 1.);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
 
     for column in matrix.iter_cols() {
@@ -39,9 +41,10 @@ fn main() {
     }
 
     // *
+    println!("\nMatrix identity\n");
 
-    let matrix_a: Matrix<f64> = Matrix::identity(4, 1.);
-    let matrix_b: Matrix<f64> = Matrix::identity(4, 1.);
+    let matrix_a = Matrix::identity(4, 1.);
+    let matrix_b = Matrix::identity(4, 1.);
     let matrix_c = Matrix::map(&matrix_a, &matrix_b, |a, b| a + b);
     if let Ok(matrix) = matrix_c {
         println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
@@ -50,6 +53,7 @@ fn main() {
     }
 
     // *
+    println!("\nLinear interpolation\n");
 
     println!("{} (0.0)", lerp(&0., &1., 0.));
     println!("{} (1.0)", lerp(&0., &1., 1.));
@@ -67,4 +71,17 @@ fn main() {
             0.5
         )
     );
+
+    // *
+    println!("\nVector dot product\n");
+
+    let u = Vector::from([0., 0.]);
+    let v = Vector::from([1., 1.]);
+    println!("{} (0.0)", u.dot(v));
+    let u = Vector::from([1., 1.]);
+    let v = Vector::from([1., 1.]);
+    println!("{} (2.0)", u.dot(v));
+    let u = Vector::from([-1., 6.]);
+    let v = Vector::from([3., 2.]);
+    println!("{} (9.0)", u.dot(v));
 }
