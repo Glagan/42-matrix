@@ -14,18 +14,19 @@ pub fn linear_combination<
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
-        + Mul<Output = K>,
+        + Mul<Output = K>
+        + Mul<f64, Output = K>,
 >(
     vectors: &[Vector<K>],
     coeffs: &[K],
 ) -> Result<Vector<K>, String> {
     // * Validate
 
-    if vectors.len() == 0 {
-        return Err(format!("Empty vectors to transform"));
+    if vectors.is_empty() {
+        return Err("Empty vectors to transform".to_string());
     }
-    if coeffs.len() == 0 {
-        return Err(format!("Empty coefficients to apply"));
+    if coeffs.is_empty() {
+        return Err("Empty coefficients to apply".to_string());
     }
 
     let size = vectors[0].size();

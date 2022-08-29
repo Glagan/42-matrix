@@ -1,32 +1,226 @@
 use std::{
     fmt::{self, Debug},
-    ops::{AddAssign, Index, IndexMut, MulAssign, SubAssign},
+    ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
     slice::Iter,
 };
 
+use crate::linear_interpolation::Lerp;
+
 #[derive(Debug)]
-pub struct Matrix<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> {
+pub struct Matrix<
+    K: Default
+        + Clone
+        + Copy
+        + Debug
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + Add<Output = K>
+        + Sub<Output = K>
+        + Mul<Output = K>,
+> {
     elements: Vec<Vec<K>>,
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> fmt::Display
-    for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > fmt::Display for Matrix<K>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self.elements)
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Default for Matrix<K> {
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Default for Matrix<K>
+{
     fn default() -> Self {
         Self::new([0, 0])
     }
 }
 
+// * Clone
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Clone for Matrix<K>
+{
+    fn clone_from(&mut self, source: &Self) {
+        *self = source.clone()
+    }
+
+    fn clone(&self) -> Self {
+        Self {
+            elements: self.elements.clone(),
+        }
+    }
+}
+
+// * Operations
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Add for Matrix<K>
+{
+    type Output = Matrix<K>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        if self.shape() == rhs.shape() {
+            let mut matrix = Matrix::new(self.shape());
+            for x in 0..self.shape()[0] {
+                for y in 0..self.shape()[1] {
+                    matrix[x][y] = self[x][y] + rhs[x][y];
+                }
+            }
+            matrix
+        } else {
+            Matrix::new([0, 0])
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Sub for Matrix<K>
+{
+    type Output = Matrix<K>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        if self.shape() == rhs.shape() {
+            let mut matrix = Matrix::new(self.shape());
+            for x in 0..self.shape()[0] {
+                for y in 0..self.shape()[1] {
+                    matrix[x][y] = self[x][y] - rhs[x][y];
+                }
+            }
+            matrix
+        } else {
+            Matrix::new([0, 0])
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Mul for Matrix<K>
+{
+    type Output = Matrix<K>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        if self.shape() == rhs.shape() {
+            let mut matrix = Matrix::new(self.shape());
+            for x in 0..self.shape()[0] {
+                for y in 0..self.shape()[1] {
+                    matrix[x][y] = self[x][y] * rhs[x][y];
+                }
+            }
+            matrix
+        } else {
+            Matrix::new([0, 0])
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Mul<f64> for Matrix<K>
+{
+    type Output = Matrix<K>;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let mut matrix = Matrix::new(self.shape());
+        for x in 0..self.shape()[0] {
+            for y in 0..self.shape()[1] {
+                matrix[x][y] = self[x][y] * rhs;
+            }
+        }
+        matrix
+    }
+}
+
 // *> From
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> From<Vec<K>>
-    for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > From<Vec<K>> for Matrix<K>
 {
     fn from(vec: Vec<K>) -> Self {
         Matrix {
@@ -35,8 +229,18 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> From
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> From<Vec<Vec<K>>>
-    for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > From<Vec<Vec<K>>> for Matrix<K>
 {
     fn from(mat: Vec<Vec<K>>) -> Matrix<K> {
         // let length = mat.len();
@@ -48,8 +252,19 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> From
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign, const N: usize>
-    From<[K; N]> for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+        const N: usize,
+    > From<[K; N]> for Matrix<K>
 {
     fn from(slice: [K; N]) -> Self {
         Matrix {
@@ -59,7 +274,16 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign, cons
 }
 
 impl<
-        K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign,
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
         const N: usize,
         const M: usize,
     > From<[[K; N]; M]> for Matrix<K>
@@ -71,20 +295,40 @@ impl<
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Index<usize>
-    for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Index<usize> for Matrix<K>
 {
     type Output = Vec<K>;
 
-    fn index<'a>(&'a self, i: usize) -> &Vec<K> {
+    fn index(&self, i: usize) -> &Vec<K> {
         &self.elements[i]
     }
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> IndexMut<usize>
-    for Matrix<K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > IndexMut<usize> for Matrix<K>
 {
-    fn index_mut<'a>(&'a mut self, i: usize) -> &mut Vec<K> {
+    fn index_mut(&mut self, i: usize) -> &mut Vec<K> {
         &mut self.elements[i]
     }
 }
@@ -93,16 +337,37 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Inde
 
 // *> Iterator
 
-pub struct ColumnIterator<'a, K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign>
-{
+pub struct ColumnIterator<
+    'a,
+    K: Default
+        + Clone
+        + Copy
+        + Debug
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + Add<Output = K>
+        + Sub<Output = K>
+        + Mul<Output = K>,
+> {
     matrix: &'a Matrix<K>,
     shape: [usize; 2],
     current_row: usize,
     current_column: usize,
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iterator
-    for ColumnIterator<'_, K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Iterator for ColumnIterator<'_, K>
 {
     type Item = K;
 
@@ -128,8 +393,19 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iter
     }
 }
 
-pub struct TupleIterator<'a, K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign>
-{
+pub struct TupleIterator<
+    'a,
+    K: Default
+        + Clone
+        + Copy
+        + Debug
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + Add<Output = K>
+        + Sub<Output = K>
+        + Mul<Output = K>,
+> {
     matrix_a: &'a Matrix<K>,
     matrix_b: &'a Matrix<K>,
     shape: [usize; 2],
@@ -137,8 +413,18 @@ pub struct TupleIterator<'a, K: Default + Clone + Copy + Debug + AddAssign + Sub
     current_column: usize,
 }
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iterator
-    for TupleIterator<'_, K>
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Iterator for TupleIterator<'_, K>
 {
     type Item = [K; 2];
 
@@ -166,7 +452,59 @@ impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Iter
 
 // *< Iterator
 
-impl<K: Default + Clone + Copy + Debug + AddAssign + SubAssign + MulAssign> Matrix<K> {
+// * Lerp
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Lerp for Matrix<K>
+{
+    fn lerp(a: &Self, b: &Self, t: f64) -> Self {
+        // if !(0. ..=1.).contains(&t) {
+        //     return Err(format!(
+        //         "Invalid t value of {}, should be between 0. and 1.",
+        //         t
+        //     ));
+        // }
+
+        if a.shape() != b.shape() {
+            return Matrix::new([0, 0]);
+        }
+
+        let mut result = Matrix::new(a.shape());
+        for x in 0..a.shape()[0] {
+            for y in 0..a.shape()[1] {
+                result[x][y] = a[x][y] * (1. - t) + b[x][y] * t;
+            }
+        }
+        result
+    }
+}
+
+// * Matrix
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>,
+    > Matrix<K>
+{
     pub fn new(shape: [usize; 2]) -> Matrix<K> {
         Matrix {
             elements: vec![vec![K::default(); shape[1]]; shape[0]],

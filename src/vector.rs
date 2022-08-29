@@ -1,4 +1,4 @@
-use crate::matrix::Matrix;
+use crate::{linear_interpolation::Lerp, matrix::Matrix};
 use std::{
     fmt::{self, Debug},
     ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
@@ -16,7 +16,8 @@ pub struct Vector<
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
-        + Mul<Output = K>,
+        + Mul<Output = K>
+        + Mul<f64, Output = K>,
 > {
     elements: Vec<K>,
 }
@@ -31,7 +32,8 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > fmt::Display for Vector<K>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -49,13 +51,16 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > Default for Vector<K>
 {
     fn default() -> Self {
         Self::new(0)
     }
 }
+
+// * Clone
 
 impl<
         K: Default
@@ -67,12 +72,40 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Clone for Vector<K>
+{
+    fn clone_from(&mut self, source: &Self) {
+        *self = source.clone()
+    }
+
+    fn clone(&self) -> Self {
+        Self {
+            elements: self.elements.clone(),
+        }
+    }
+}
+
+// * Index access
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > Index<usize> for Vector<K>
 {
     type Output = K;
 
-    fn index<'a>(&'a self, i: usize) -> &'a K {
+    fn index(&self, i: usize) -> &K {
         &self.elements[i]
     }
 }
@@ -87,11 +120,126 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > IndexMut<usize> for Vector<K>
 {
-    fn index_mut<'a>(&'a mut self, i: usize) -> &'a mut K {
+    fn index_mut(&mut self, i: usize) -> &mut K {
         &mut self.elements[i]
+    }
+}
+
+// * Operations
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Add for Vector<K>
+{
+    type Output = Vector<K>;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        if self.size() == rhs.size() {
+            let mut vector = Vector::new(self.size());
+            for index in 0..self.size() {
+                vector[index] = self[index] + rhs[index];
+            }
+            vector
+        } else {
+            Vector::new(0)
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Sub for Vector<K>
+{
+    type Output = Vector<K>;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        if self.size() == rhs.size() {
+            let mut vector = Vector::new(self.size());
+            for index in 0..self.size() {
+                vector[index] = self[index] - rhs[index];
+            }
+            vector
+        } else {
+            Vector::new(0)
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Mul for Vector<K>
+{
+    type Output = Vector<K>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        if self.size() == rhs.size() {
+            let mut vector = Vector::new(self.size());
+            for index in 0..self.size() {
+                vector[index] = self[index] * rhs[index];
+            }
+            vector
+        } else {
+            Vector::new(0)
+        }
+    }
+}
+
+impl<
+        K: Default
+            + Clone
+            + Copy
+            + Debug
+            + AddAssign
+            + SubAssign
+            + MulAssign
+            + Add<Output = K>
+            + Sub<Output = K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Mul<f64> for Vector<K>
+{
+    type Output = Vector<K>;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let mut vector = Vector::new(self.size());
+        for index in 0..self.size() {
+            vector[index] = self[index] * rhs;
+        }
+        vector
     }
 }
 
@@ -107,7 +255,8 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > From<Vec<K>> for Vector<K>
 {
     fn from(vec: Vec<K>) -> Self {
@@ -125,7 +274,8 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
         const N: usize,
     > From<[K; N]> for Vector<K>
 {
@@ -138,26 +288,7 @@ impl<
 
 // *< From
 
-// *> Iterator
-
-pub struct TupleIterator<
-    'a,
-    K: Default
-        + Clone
-        + Copy
-        + Debug
-        + AddAssign
-        + SubAssign
-        + MulAssign
-        + Add<Output = K>
-        + Sub<Output = K>
-        + Mul<Output = K>,
-> {
-    vector_a: &'a Vector<K>,
-    vector_b: &'a Vector<K>,
-    size: usize,
-    current_column: usize,
-}
+// * Lerp
 
 impl<
         K: Default
@@ -169,26 +300,31 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
-    > Iterator for TupleIterator<'_, K>
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
+    > Lerp for Vector<K>
 {
-    type Item = [K; 2];
+    fn lerp(a: &Vector<K>, b: &Vector<K>, t: f64) -> Vector<K> {
+        // if !(0. ..=1.).contains(&t) {
+        //     return Err(format!(
+        //         "Invalid t value of {}, should be between 0. and 1.",
+        //         t
+        //     ));
+        // }
 
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.size == 0 {
-            return None;
-        }
-        if self.current_column >= self.size {
-            return None;
+        if a.size() != b.size() {
+            return Vector::new(0);
         }
 
-        let column = self.current_column;
-        self.current_column += 1;
-        Some([self.vector_a[column], self.vector_b[column]])
+        let mut result = Vector::new(a.size());
+        for index in 0..a.size() {
+            result[index] = a[index] * (1. - t) + b[index] * t;
+        }
+        result
     }
 }
 
-// *< Iterator
+// * Vector
 
 impl<
         K: Default
@@ -200,7 +336,8 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>,
     > Vector<K>
 {
     pub fn new(size: usize) -> Vector<K> {
@@ -259,37 +396,9 @@ impl<
         self.elements.iter()
     }
 
-    // Create an iterator with the value of two vectors
-    #[allow(dead_code)]
-    pub fn iter_tuple<'a>(
-        a: &'a Vector<K>,
-        b: &'a Vector<K>,
-    ) -> Result<TupleIterator<'a, K>, String> {
-        let a_size = a.size();
-        if a_size != b.size() {
-            return Err(format!("Invalid sizes {:?} and {:?}", a_size, b.size()));
-        }
-
-        Ok(TupleIterator {
-            vector_a: a,
-            vector_b: b,
-            size: a_size,
-            current_column: 0,
-        })
-    }
-
-    // Create a TupleIterator with another vector
-    #[allow(dead_code)]
-    pub fn iter_with<'a>(&'a self, b: &'a Vector<K>) -> Result<TupleIterator<'a, K>, String> {
-        Vector::iter_tuple(self, b)
-    }
-
     // Apply a function on each of the elements of the vector and return a new vector with the function applied
     #[allow(dead_code)]
-    pub fn map<'a>(
-        &'a self,
-        callback: fn(index: usize, value: K) -> K,
-    ) -> Result<Vector<K>, String> {
+    pub fn map(&self, callback: fn(index: usize, value: K) -> K) -> Result<Vector<K>, String> {
         let size = self.size();
         let mut new_vector = Vector::new(size);
         for column in 0..size {
