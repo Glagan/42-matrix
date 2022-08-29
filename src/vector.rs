@@ -1,4 +1,4 @@
-use crate::{linear_interpolation::Lerp, matrix::Matrix};
+use crate::{linear_interpolation::Lerp, matrix::Matrix, norm::Norm};
 use std::{
     fmt::{self, Debug},
     ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
@@ -17,7 +17,8 @@ pub struct Vector<
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
-        + Mul<f64, Output = K>,
+        + Mul<f64, Output = K>
+        + Norm,
 > {
     elements: Vec<K>,
 }
@@ -33,7 +34,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > fmt::Display for Vector<K>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -52,7 +54,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Default for Vector<K>
 {
     fn default() -> Self {
@@ -73,7 +76,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Clone for Vector<K>
 {
     fn clone_from(&mut self, source: &Self) {
@@ -100,7 +104,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Index<usize> for Vector<K>
 {
     type Output = K;
@@ -121,7 +126,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > IndexMut<usize> for Vector<K>
 {
     fn index_mut(&mut self, i: usize) -> &mut K {
@@ -142,7 +148,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Add for Vector<K>
 {
     type Output = Vector<K>;
@@ -171,7 +178,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Sub for Vector<K>
 {
     type Output = Vector<K>;
@@ -200,7 +208,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Mul for Vector<K>
 {
     type Output = Vector<K>;
@@ -229,7 +238,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Mul<f64> for Vector<K>
 {
     type Output = Vector<K>;
@@ -256,7 +266,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > From<Vec<K>> for Vector<K>
 {
     fn from(vec: Vec<K>) -> Self {
@@ -275,7 +286,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
         const N: usize,
     > From<[K; N]> for Vector<K>
 {
@@ -301,7 +313,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Lerp for Vector<K>
 {
     fn lerp(a: &Vector<K>, b: &Vector<K>, t: f64) -> Vector<K> {
@@ -337,7 +350,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Vector<K>
 {
     pub fn new(size: usize) -> Vector<K> {
@@ -476,6 +490,36 @@ impl<
         let mut result = K::default();
         for index in 0..size {
             result += self[index] * b[index];
+        }
+        result
+    }
+
+    #[allow(dead_code)]
+    pub fn norm_1(&self) -> f64 {
+        let mut result = 0.;
+        for index in 0..self.size() {
+            result += self[index].abs();
+        }
+        result
+    }
+
+    #[allow(dead_code)]
+    pub fn norm(&self) -> f64 {
+        let mut result = 0.;
+        for index in 0..self.size() {
+            result += self[index].pow(2.);
+        }
+        result.pow(0.5)
+    }
+
+    #[allow(dead_code)]
+    pub fn norm_inf(&self) -> f64 {
+        let mut result = 0.;
+        if self.size() > 0 {
+            result = self[0].abs()
+        }
+        for index in 1..self.size() {
+            result = result.max(self[index].abs());
         }
         result
     }

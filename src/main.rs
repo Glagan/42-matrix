@@ -3,6 +3,7 @@ use crate::{linear_interpolation::lerp, matrix::Matrix, vector::Vector};
 pub mod linear_combination;
 pub mod linear_interpolation;
 pub mod matrix;
+pub mod norm;
 pub mod vector;
 
 fn main() {
@@ -84,4 +85,29 @@ fn main() {
     let u = Vector::from([-1., 6.]);
     let v = Vector::from([3., 2.]);
     println!("{} (9.0)", u.dot(v));
+
+    // *
+    println!("\nNorm\n");
+
+    let u = Vector::from([0., 0., 0.]);
+    println!(
+        "{}, {}, {} (0.0, 0.0, 0.0)",
+        u.norm_1(),
+        u.norm(),
+        u.norm_inf()
+    );
+    let u = Vector::from([1., 2., 3.]);
+    println!(
+        "{}, {}, {} (6.0, 3.74165738, 3.0)",
+        u.norm_1(),
+        u.norm(),
+        u.norm_inf()
+    );
+    let u = Vector::from([-1., -2.]);
+    println!(
+        "{}, {}, {} (3.0, 2.236067977, 2.0)",
+        u.norm_1(),
+        u.norm(),
+        u.norm_inf()
+    );
 }

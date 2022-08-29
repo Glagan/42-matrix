@@ -1,4 +1,4 @@
-use crate::vector::Vector;
+use crate::{norm::Norm, vector::Vector};
 use std::{
     fmt::Debug,
     ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign},
@@ -15,7 +15,8 @@ pub fn linear_combination<
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
-        + Mul<f64, Output = K>,
+        + Mul<f64, Output = K>
+        + Norm,
 >(
     vectors: &[Vector<K>],
     coeffs: &[K],
