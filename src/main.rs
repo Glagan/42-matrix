@@ -1,5 +1,6 @@
-use crate::{linear_interpolation::lerp, matrix::Matrix, vector::Vector};
+use crate::{cosine::angle_cos, linear_interpolation::lerp, matrix::Matrix, vector::Vector};
 
+pub mod cosine;
 pub mod linear_combination;
 pub mod linear_interpolation;
 pub mod matrix;
@@ -78,13 +79,13 @@ fn main() {
 
     let u = Vector::from([0., 0.]);
     let v = Vector::from([1., 1.]);
-    println!("{} (0.0)", u.dot(v));
+    println!("{} (0.0)", u.dot(&v));
     let u = Vector::from([1., 1.]);
     let v = Vector::from([1., 1.]);
-    println!("{} (2.0)", u.dot(v));
+    println!("{} (2.0)", u.dot(&v));
     let u = Vector::from([-1., 6.]);
     let v = Vector::from([3., 2.]);
-    println!("{} (9.0)", u.dot(v));
+    println!("{} (9.0)", u.dot(&v));
 
     // *
     println!("\nNorm\n");
@@ -110,4 +111,23 @@ fn main() {
         u.norm(),
         u.norm_inf()
     );
+
+    // *
+    println!("\nCosine\n");
+
+    let u = Vector::from([1., 0.]);
+    let v = Vector::from([1., 0.]);
+    println!("{} (1.0)", angle_cos(&u, &v));
+    let u = Vector::from([1., 0.]);
+    let v = Vector::from([0., 1.]);
+    println!("{} (0.0)", angle_cos(&u, &v));
+    let u = Vector::from([-1., 1.]);
+    let v = Vector::from([1., -1.]);
+    println!("{} (-1.0)", angle_cos(&u, &v));
+    let u = Vector::from([2., 1.]);
+    let v = Vector::from([4., 2.]);
+    println!("{} (1.0)", angle_cos(&u, &v));
+    let u = Vector::from([1., 2., 3.]);
+    let v = Vector::from([4., 5., 6.]);
+    println!("{} (0.97463185)", angle_cos(&u, &v));
 }

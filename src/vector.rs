@@ -481,7 +481,7 @@ impl<
     }
 
     #[allow(dead_code)]
-    pub fn dot(&self, b: Vector<K>) -> K {
+    pub fn dot(&self, b: &Vector<K>) -> K {
         let size = self.size();
         if size != b.size() {
             return K::default();
