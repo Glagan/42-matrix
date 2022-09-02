@@ -179,4 +179,17 @@ fn main() {
     println!("{} (9.)", u.trace());
     let u = Matrix::from([[-2., -8., 4.], [1., -23., 4.], [0., 6., 4.]]);
     println!("{} (-21.)", u.trace());
+
+    // *
+    println!("\nMatrix transpose\n");
+
+    let u = Matrix::from([[1., 2.], [3., 1.]]);
+    println!("{} ([[1., 3.], [2., 1.]])", u.transpose());
+    let u = Matrix::from([[1., 2., 3.], [4., 5., 6.]]);
+    println!("{} ([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]])", u.transpose());
+    let u = Matrix::from([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]]);
+    println!(
+        "{} ([[1.0, 4.0, 7.0], [2.0, 5.0, 8.0], [3.0, 6.0, 9.0]])",
+        u.transpose()
+    );
 }

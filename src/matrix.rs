@@ -748,4 +748,15 @@ impl<
 
         result
     }
+
+    pub fn transpose(&self) -> Matrix<K> {
+        let shape = self.shape();
+        let mut result = Matrix::new([shape[1], shape[0]]);
+        for row in 0..shape[0] {
+            for column in 0..shape[1] {
+                result[column][row] = self[row][column];
+            }
+        }
+        result
+    }
 }
