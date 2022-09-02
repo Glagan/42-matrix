@@ -4,7 +4,7 @@ use std::{
     slice::Iter,
 };
 
-use crate::linear_interpolation::Lerp;
+use crate::{linear_interpolation::Lerp, norm::Norm, vector::Vector};
 
 #[derive(Debug)]
 pub struct Matrix<
@@ -17,7 +17,9 @@ pub struct Matrix<
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
-        + Mul<Output = K>,
+        + Mul<Output = K>
+        + Mul<f64, Output = K>
+        + Norm,
 > {
     elements: Vec<Vec<K>>,
 }
@@ -32,7 +34,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > fmt::Display for Matrix<K>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -50,7 +54,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > Default for Matrix<K>
 {
     fn default() -> Self {
@@ -71,7 +77,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Clone for Matrix<K>
 {
     fn clone_from(&mut self, source: &Self) {
@@ -98,7 +105,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Add for Matrix<K>
 {
     type Output = Matrix<K>;
@@ -129,7 +137,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Sub for Matrix<K>
 {
     type Output = Matrix<K>;
@@ -160,7 +169,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Mul for Matrix<K>
 {
     type Output = Matrix<K>;
@@ -191,7 +201,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Mul<f64> for Matrix<K>
 {
     type Output = Matrix<K>;
@@ -219,7 +230,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > From<Vec<K>> for Matrix<K>
 {
     fn from(vec: Vec<K>) -> Self {
@@ -239,7 +252,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > From<Vec<Vec<K>>> for Matrix<K>
 {
     fn from(mat: Vec<Vec<K>>) -> Matrix<K> {
@@ -262,7 +277,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
         const N: usize,
     > From<[K; N]> for Matrix<K>
 {
@@ -283,7 +300,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
         const N: usize,
         const M: usize,
     > From<[[K; N]; M]> for Matrix<K>
@@ -305,7 +324,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > Index<usize> for Matrix<K>
 {
     type Output = Vec<K>;
@@ -325,7 +346,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > IndexMut<usize> for Matrix<K>
 {
     fn index_mut(&mut self, i: usize) -> &mut Vec<K> {
@@ -348,7 +371,9 @@ pub struct ColumnIterator<
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
-        + Mul<Output = K>,
+        + Mul<Output = K>
+        + Mul<f64, Output = K>
+        + Norm,
 > {
     matrix: &'a Matrix<K>,
     shape: [usize; 2],
@@ -366,7 +391,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > Iterator for ColumnIterator<'_, K>
 {
     type Item = K;
@@ -404,7 +431,9 @@ pub struct TupleIterator<
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
-        + Mul<Output = K>,
+        + Mul<Output = K>
+        + Mul<f64, Output = K>
+        + Norm,
 > {
     matrix_a: &'a Matrix<K>,
     matrix_b: &'a Matrix<K>,
@@ -423,7 +452,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > Iterator for TupleIterator<'_, K>
 {
     type Item = [K; 2];
@@ -465,7 +496,8 @@ impl<
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
-            + Mul<f64, Output = K>,
+            + Mul<f64, Output = K>
+            + Norm,
     > Lerp for Matrix<K>
 {
     fn lerp(a: &Self, b: &Self, t: f64) -> Self {
@@ -502,7 +534,9 @@ impl<
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
-            + Mul<Output = K>,
+            + Mul<Output = K>
+            + Mul<f64, Output = K>
+            + Norm,
     > Matrix<K>
 {
     pub fn new(shape: [usize; 2]) -> Matrix<K> {
@@ -660,5 +694,44 @@ impl<
                 self[row][column] *= value;
             }
         }
+    }
+
+    pub fn mul_vec(&self, vector: &Vector<K>) -> Vector<K> {
+        let shape = self.shape();
+        if shape[1] != vector.size() {
+            return Vector::new(0);
+        }
+
+        let mut result = Vector::new(shape[0]);
+        for row in 0..shape[0] {
+            let mut value = K::default();
+            for column in 0..shape[1] {
+                value += self[row][column] * vector[column];
+            }
+            result[row] = value;
+        }
+
+        result
+    }
+
+    pub fn mul_mat(&self, matrix: &Matrix<K>) -> Matrix<K> {
+        let self_shape = self.shape();
+        let other_shape = matrix.shape();
+        if self_shape[0] != other_shape[1] || self_shape[1] != other_shape[0] {
+            return Matrix::new([0, 0]);
+        }
+
+        let mut result = Matrix::new([self_shape[0], other_shape[1]]);
+        for row in 0..self_shape[0] {
+            for result_column in 0..other_shape[1] {
+                let mut value = K::default();
+                for column in 0..self_shape[1] {
+                    value += self[row][column] * matrix[column][result_column];
+                }
+                result[row][result_column] = value;
+            }
+        }
+
+        result
     }
 }

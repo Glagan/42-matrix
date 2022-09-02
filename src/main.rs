@@ -147,4 +147,25 @@ fn main() {
     let u = Vector::from([4., 2., -3.]);
     let v = Vector::from([-2., -5., 16.]);
     println!("{}, ([17., -58., -16.])", cross_product(&u, &v));
+
+    // *
+    println!("\nMatrix multiplication\n");
+    let u = Matrix::from([[1., 0.], [0., 1.]]);
+    let v = Vector::from([4., 2.]);
+    println!("{} ([4., 2.])", u.mul_vec(&v));
+    let u = Matrix::from([[2., 0.], [0., 2.]]);
+    let v = Vector::from([4., 2.]);
+    println!("{} ([8., 4.])", u.mul_vec(&v));
+    let u = Matrix::from([[2., -2.], [-2., 2.]]);
+    let v = Vector::from([4., 2.]);
+    println!("{} ([4., -4.])", u.mul_vec(&v));
+    let u = Matrix::from([[1., 0.], [0., 1.]]);
+    let v = Matrix::from([[1., 0.], [0., 1.]]);
+    println!("{} ([[1., 0.], [0., 1.]])", u.mul_mat(&v));
+    let u = Matrix::from([[1., 0.], [0., 1.]]);
+    let v = Matrix::from([[2., 1.], [4., 2.]]);
+    println!("{} ([[2., 1.], [4., 2.]])", u.mul_mat(&v));
+    let u = Matrix::from([[3., -5.], [6., 8.]]);
+    let v = Matrix::from([[2., 1.], [4., 2.]]);
+    println!("{} ([[-14., -7.], [44., 22.]])", u.mul_mat(&v));
 }
