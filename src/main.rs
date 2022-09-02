@@ -1,6 +1,10 @@
-use crate::{cosine::angle_cos, linear_interpolation::lerp, matrix::Matrix, vector::Vector};
+use crate::{
+    cosine::angle_cos, cross_product::cross_product, linear_interpolation::lerp, matrix::Matrix,
+    vector::Vector,
+};
 
 pub mod cosine;
+pub mod cross_product;
 pub mod linear_combination;
 pub mod linear_interpolation;
 pub mod matrix;
@@ -130,4 +134,17 @@ fn main() {
     let u = Vector::from([1., 2., 3.]);
     let v = Vector::from([4., 5., 6.]);
     println!("{} (0.97463185)", angle_cos(&u, &v));
+
+    // *
+    println!("\nCross product\n");
+
+    let u = Vector::from([0., 0., 1.]);
+    let v = Vector::from([1., 0., 0.]);
+    println!("{} ([0., 1., 0.])", cross_product(&u, &v));
+    let u = Vector::from([1., 2., 3.]);
+    let v = Vector::from([4., 5., 6.]);
+    println!("{} ([-3., 6., -3.])", cross_product(&u, &v));
+    let u = Vector::from([4., 2., -3.]);
+    let v = Vector::from([-2., -5., 16.]);
+    println!("{}, ([17., -58., -16.])", cross_product(&u, &v));
 }
