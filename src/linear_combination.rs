@@ -1,7 +1,7 @@
 use crate::{norm::Norm, vector::Vector};
 use std::{
     fmt::Debug,
-    ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign},
+    ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign},
 };
 
 pub fn linear_combination<
@@ -9,12 +9,14 @@ pub fn linear_combination<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Norm,
 >(

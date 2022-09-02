@@ -1,6 +1,6 @@
 use std::{
     fmt::{self, Debug},
-    ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
+    ops::{Add, AddAssign, Div, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
     slice::Iter,
 };
 
@@ -12,12 +12,14 @@ pub struct Matrix<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Norm,
 > {
@@ -29,12 +31,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > fmt::Display for Matrix<K>
@@ -49,12 +53,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Default for Matrix<K>
@@ -71,12 +77,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Clone for Matrix<K>
@@ -99,12 +107,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Add for Matrix<K>
@@ -131,12 +141,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Sub for Matrix<K>
@@ -163,12 +175,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Mul for Matrix<K>
@@ -195,12 +209,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Mul<f64> for Matrix<K>
@@ -225,12 +241,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > From<Vec<K>> for Matrix<K>
@@ -247,12 +265,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > From<Vec<Vec<K>>> for Matrix<K>
@@ -272,12 +292,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
         const N: usize,
@@ -295,12 +317,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
         const N: usize,
@@ -319,12 +343,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Index<usize> for Matrix<K>
@@ -341,12 +367,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > IndexMut<usize> for Matrix<K>
@@ -366,12 +394,14 @@ pub struct ColumnIterator<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Norm,
 > {
@@ -386,12 +416,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Iterator for ColumnIterator<'_, K>
@@ -426,12 +458,14 @@ pub struct TupleIterator<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Norm,
 > {
@@ -447,12 +481,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Iterator for TupleIterator<'_, K>
@@ -490,12 +526,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Lerp for Matrix<K>
@@ -529,12 +567,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Matrix<K>
@@ -757,6 +797,53 @@ impl<
                 result[column][row] = self[row][column];
             }
         }
+        result
+    }
+
+    pub fn row_echelon(&self) -> Matrix<K> {
+        let shape = self.shape();
+        let zero_value = K::default();
+        let mut lead = 0;
+
+        let mut result = Matrix::clone(self);
+        for r in 0..shape[0] {
+            if shape[1] <= lead {
+                return result;
+            }
+            let mut i = r;
+            while result[i][lead] == zero_value {
+                i += 1;
+                if shape[0] == i {
+                    i = r;
+                    lead += 1;
+                    if shape[1] == lead {
+                        return result;
+                    }
+                }
+            }
+
+            let tmp = result[i].clone();
+            result[i] = result[r].clone();
+            result[r] = tmp;
+
+            let val = result[r][lead];
+            for j in 0..shape[1] {
+                result[r][j] = result[r][j] / val;
+            }
+
+            for i in 0..shape[0] {
+                if i == r {
+                    continue;
+                }
+                let val = result[i][lead];
+                for j in 0..shape[1] {
+                    result[i][j] = result[i][j] - val * result[r][j];
+                }
+            }
+
+            lead += 1;
+        }
+
         result
     }
 }

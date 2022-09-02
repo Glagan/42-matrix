@@ -9,12 +9,14 @@ pub fn angle_cos<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Div<f64, Output = f64>
         + Norm,

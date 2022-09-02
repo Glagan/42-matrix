@@ -1,7 +1,7 @@
 use crate::{linear_interpolation::Lerp, matrix::Matrix, norm::Norm};
 use std::{
     fmt::{self, Debug},
-    ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
+    ops::{Add, AddAssign, Div, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
     slice::Iter,
 };
 
@@ -11,12 +11,14 @@ pub struct Vector<
         + Clone
         + Copy
         + Debug
+        + PartialEq
         + AddAssign
         + SubAssign
         + MulAssign
         + Add<Output = K>
         + Sub<Output = K>
         + Mul<Output = K>
+        + Div<Output = K>
         + Mul<f64, Output = K>
         + Norm,
 > {
@@ -28,12 +30,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > fmt::Display for Vector<K>
@@ -48,12 +52,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Default for Vector<K>
@@ -70,12 +76,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Clone for Vector<K>
@@ -98,12 +106,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Index<usize> for Vector<K>
@@ -120,12 +130,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > IndexMut<usize> for Vector<K>
@@ -142,12 +154,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Add for Vector<K>
@@ -172,12 +186,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Sub for Vector<K>
@@ -202,12 +218,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Mul for Vector<K>
@@ -232,12 +250,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Mul<f64> for Vector<K>
@@ -260,12 +280,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > From<Vec<K>> for Vector<K>
@@ -280,12 +302,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
         const N: usize,
@@ -307,12 +331,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Lerp for Vector<K>
@@ -344,12 +370,14 @@ impl<
             + Clone
             + Copy
             + Debug
+            + PartialEq
             + AddAssign
             + SubAssign
             + MulAssign
             + Add<Output = K>
             + Sub<Output = K>
             + Mul<Output = K>
+            + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
     > Vector<K>
