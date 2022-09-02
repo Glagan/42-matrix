@@ -150,6 +150,7 @@ fn main() {
 
     // *
     println!("\nMatrix multiplication\n");
+
     let u = Matrix::from([[1., 0.], [0., 1.]]);
     let v = Vector::from([4., 2.]);
     println!("{} ([4., 2.])", u.mul_vec(&v));
@@ -168,4 +169,14 @@ fn main() {
     let u = Matrix::from([[3., -5.], [6., 8.]]);
     let v = Matrix::from([[2., 1.], [4., 2.]]);
     println!("{} ([[-14., -7.], [44., 22.]])", u.mul_mat(&v));
+
+    // *
+    println!("\nMatrix trace\n");
+
+    let u = Matrix::from([[1., 0.], [0., 1.]]);
+    println!("{} (2.)", u.trace());
+    let u = Matrix::from([[2., -5., 0.], [4., 3., 7.], [-2., 3., 4.]]);
+    println!("{} (9.)", u.trace());
+    let u = Matrix::from([[-2., -8., 4.], [1., -23., 4.], [0., 6., 4.]]);
+    println!("{} (-21.)", u.trace());
 }

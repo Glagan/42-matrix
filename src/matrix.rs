@@ -734,4 +734,18 @@ impl<
 
         result
     }
+
+    pub fn trace(&self) -> K {
+        let shape = self.shape();
+        if shape[0] != shape[1] {
+            return K::default();
+        }
+
+        let mut result = K::default();
+        for i in 0..shape[0] {
+            result = result + self[i][i];
+        }
+
+        result
+    }
 }
