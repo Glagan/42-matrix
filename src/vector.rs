@@ -1,4 +1,4 @@
-use crate::{linear_interpolation::Lerp, matrix::Matrix, norm::Norm};
+use crate::{linear_interpolation::Lerp, matrix::Matrix};
 use std::{
     fmt::{self, Debug},
     ops::{Add, Index, IndexMut, Mul, Sub},
@@ -311,9 +311,9 @@ impl Vector {
     pub fn norm(&self) -> f64 {
         let mut result = 0.;
         for index in 0..self.size() {
-            result += self[index].pow(2.);
+            result += self[index].powf(2.);
         }
-        result.pow(0.5)
+        result.powf(0.5)
     }
 
     #[allow(dead_code)]
