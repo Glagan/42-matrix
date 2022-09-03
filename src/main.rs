@@ -15,7 +15,7 @@ fn main() {
     // *
     println!("\nVector constructors\n");
 
-    let vec = Vector::<f64>::new(4);
+    let vec = Vector::new(4);
     println!("vec: {} (shape: {:#?})", vec, vec.shape());
     let vec = Vector::from(vec![1., 2., 3., 4.]);
     println!("vec: {} (shape: {:#?})", vec, vec.shape());
@@ -31,7 +31,7 @@ fn main() {
     // *
     println!("\nMatrix constructors\n");
 
-    let matrix = Matrix::<f64>::new([4, 4]);
+    let matrix = Matrix::new([4, 4]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
     let matrix = Matrix::from(vec![1., 2., 3., 4., 5., 6.]);
     println!("matrix: {} (shape: {:#?})", matrix, matrix.shape());
@@ -66,11 +66,11 @@ fn main() {
     println!("{} (0.5)", lerp(&0., &1., 0.5));
     println!("{} (27.3)", lerp(&21., &42., 0.3));
     println!(
-        "{} ([2.6, 1.3])",
+        "{}\n([2.6, 1.3])",
         lerp(&Vector::from([2., 1.]), &Vector::from([4., 2.]), 0.3)
     );
     println!(
-        "{} ([[11.0, 5.5], [16.5, 22.0]])",
+        "{}\n([[11.0, 5.5], [16.5, 22.0]])",
         lerp(
             &Matrix::from([[2., 1.], [3., 4.]]),
             &Matrix::from([[20., 10.], [30., 40.]]),
@@ -140,35 +140,35 @@ fn main() {
 
     let u = Vector::from([0., 0., 1.]);
     let v = Vector::from([1., 0., 0.]);
-    println!("{} ([0., 1., 0.])", cross_product(&u, &v));
+    println!("{}\n([0., 1., 0.])", cross_product(&u, &v));
     let u = Vector::from([1., 2., 3.]);
     let v = Vector::from([4., 5., 6.]);
-    println!("{} ([-3., 6., -3.])", cross_product(&u, &v));
+    println!("{}\n([-3., 6., -3.])", cross_product(&u, &v));
     let u = Vector::from([4., 2., -3.]);
     let v = Vector::from([-2., -5., 16.]);
-    println!("{}, ([17., -58., -16.])", cross_product(&u, &v));
+    println!("{}\n([17., -58., -16.])", cross_product(&u, &v));
 
     // *
     println!("\nMatrix multiplication\n");
 
     let u = Matrix::from([[1., 0.], [0., 1.]]);
     let v = Vector::from([4., 2.]);
-    println!("{} ([4., 2.])", u.mul_vec(&v));
+    println!("{}\n([4., 2.])", u.mul_vec(&v));
     let u = Matrix::from([[2., 0.], [0., 2.]]);
     let v = Vector::from([4., 2.]);
-    println!("{} ([8., 4.])", u.mul_vec(&v));
+    println!("{}\n([8., 4.])", u.mul_vec(&v));
     let u = Matrix::from([[2., -2.], [-2., 2.]]);
     let v = Vector::from([4., 2.]);
-    println!("{} ([4., -4.])", u.mul_vec(&v));
+    println!("{}\n([4., -4.])", u.mul_vec(&v));
     let u = Matrix::from([[1., 0.], [0., 1.]]);
     let v = Matrix::from([[1., 0.], [0., 1.]]);
-    println!("{} ([[1., 0.], [0., 1.]])", u.mul_mat(&v));
+    println!("{}\n([[1., 0.], [0., 1.]])", u.mul_mat(&v));
     let u = Matrix::from([[1., 0.], [0., 1.]]);
     let v = Matrix::from([[2., 1.], [4., 2.]]);
-    println!("{} ([[2., 1.], [4., 2.]])", u.mul_mat(&v));
+    println!("{}\n([[2., 1.], [4., 2.]])", u.mul_mat(&v));
     let u = Matrix::from([[3., -5.], [6., 8.]]);
     let v = Matrix::from([[2., 1.], [4., 2.]]);
-    println!("{} ([[-14., -7.], [44., 22.]])", u.mul_mat(&v));
+    println!("{}\n([[-14., -7.], [44., 22.]])", u.mul_mat(&v));
 
     // *
     println!("\nMatrix trace\n");
@@ -184,12 +184,12 @@ fn main() {
     println!("\nMatrix transpose\n");
 
     let u = Matrix::from([[1., 2.], [3., 1.]]);
-    println!("{} ([[1., 3.], [2., 1.]])", u.transpose());
+    println!("{}\n([[1., 3.], [2., 1.]])", u.transpose());
     let u = Matrix::from([[1., 2., 3.], [4., 5., 6.]]);
-    println!("{} ([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]])", u.transpose());
+    println!("{}\n([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]])", u.transpose());
     let u = Matrix::from([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.]]);
     println!(
-        "{} ([[1.0, 4.0, 7.0], [2.0, 5.0, 8.0], [3.0, 6.0, 9.0]])",
+        "{}\n([[1.0, 4.0, 7.0], [2.0, 5.0, 8.0], [3.0, 6.0, 9.0]])",
         u.transpose()
     );
 
@@ -198,19 +198,19 @@ fn main() {
 
     let u = Matrix::from([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]);
     println!(
-        "{} ([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])",
+        "{}\n([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])",
         u.row_echelon()
     );
     let u = Matrix::from([[1., 2.], [3., 4.]]);
-    println!("{} ([[1., 0.], [0., 1.]])", u.row_echelon());
+    println!("{}\n([[1., 0.], [0., 1.]])", u.row_echelon());
     let u = Matrix::from([[1., 2.], [2., 4.]]);
-    println!("{} ([[1., 2.], [0., 0.]])", u.row_echelon());
+    println!("{}\n([[1., 2.], [0., 0.]])", u.row_echelon());
     let u = Matrix::from([
         [8., 5., -2., 4., 28.],
         [4., 2.5, 20., 4., -4.],
         [8., 5., 1., 4., 17.],
     ]);
-    println!("{} ([[1., 0.625, 0., 0., -12.1666667], [0., 0., 1., 0., -3.6666667], [0., 0., 0., 1., 29.5]])", u.row_echelon());
+    println!("{}\n([[1., 0.625, 0., 0., -12.1666667], [0., 0., 1., 0., -3.6666667], [0., 0., 0., 1., 29.5]])", u.row_echelon());
 
     // *
     println!("\nMatrix determinant\n");

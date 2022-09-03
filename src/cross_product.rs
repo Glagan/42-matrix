@@ -1,29 +1,6 @@
-use crate::{norm::Norm, vector::Vector};
-use std::{
-    fmt::Debug,
-    ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign},
-};
+use crate::vector::Vector;
 
-pub fn cross_product<
-    K: Default
-        + Clone
-        + Copy
-        + Debug
-        + PartialEq
-        + AddAssign
-        + SubAssign
-        + MulAssign
-        + Add<Output = K>
-        + Sub<Output = K>
-        + Mul<Output = K>
-        + Div<Output = K>
-        + Mul<f64, Output = K>
-        + Div<f64, Output = f64>
-        + Norm,
->(
-    u: &Vector<K>,
-    v: &Vector<K>,
-) -> Vector<K> {
+pub fn cross_product(u: &Vector, v: &Vector) -> Vector {
     // * Validate
     let u_size = u.size();
     let v_size = v.size();

@@ -1,69 +1,22 @@
 use crate::{linear_interpolation::Lerp, matrix::Matrix, norm::Norm};
 use std::{
     fmt::{self, Debug},
-    ops::{Add, AddAssign, Div, Index, IndexMut, Mul, MulAssign, Sub, SubAssign},
+    ops::{Add, Index, IndexMut, Mul, Sub},
     slice::Iter,
 };
 
 #[derive(Debug)]
-pub struct Vector<
-    K: Default
-        + Clone
-        + Copy
-        + Debug
-        + PartialEq
-        + AddAssign
-        + SubAssign
-        + MulAssign
-        + Add<Output = K>
-        + Sub<Output = K>
-        + Mul<Output = K>
-        + Div<Output = K>
-        + Mul<f64, Output = K>
-        + Norm,
-> {
-    elements: Vec<K>,
+pub struct Vector {
+    elements: Vec<f64>,
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > fmt::Display for Vector<K>
-{
+impl fmt::Display for Vector {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self.elements)
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Default for Vector<K>
-{
+impl Default for Vector {
     fn default() -> Self {
         Self::new(0)
     }
@@ -71,23 +24,7 @@ impl<
 
 // * Clone
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Clone for Vector<K>
-{
+impl Clone for Vector {
     fn clone_from(&mut self, source: &Self) {
         *self = source.clone()
     }
@@ -101,72 +38,24 @@ impl<
 
 // * Index access
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Index<usize> for Vector<K>
-{
-    type Output = K;
+impl Index<usize> for Vector {
+    type Output = f64;
 
-    fn index(&self, i: usize) -> &K {
+    fn index(&self, i: usize) -> &f64 {
         &self.elements[i]
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > IndexMut<usize> for Vector<K>
-{
-    fn index_mut(&mut self, i: usize) -> &mut K {
+impl IndexMut<usize> for Vector {
+    fn index_mut(&mut self, i: usize) -> &mut f64 {
         &mut self.elements[i]
     }
 }
 
 // * Operations
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Add for Vector<K>
-{
-    type Output = Vector<K>;
+impl Add for Vector {
+    type Output = Vector;
 
     fn add(self, rhs: Self) -> Self::Output {
         if self.size() == rhs.size() {
@@ -181,24 +70,8 @@ impl<
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Sub for Vector<K>
-{
-    type Output = Vector<K>;
+impl Sub for Vector {
+    type Output = Vector;
 
     fn sub(self, rhs: Self) -> Self::Output {
         if self.size() == rhs.size() {
@@ -213,24 +86,8 @@ impl<
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Mul for Vector<K>
-{
-    type Output = Vector<K>;
+impl Mul for Vector {
+    type Output = Vector;
 
     fn mul(self, rhs: Self) -> Self::Output {
         if self.size() == rhs.size() {
@@ -245,24 +102,8 @@ impl<
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Mul<f64> for Vector<K>
-{
-    type Output = Vector<K>;
+impl Mul<f64> for Vector {
+    type Output = Vector;
 
     fn mul(self, rhs: f64) -> Self::Output {
         let mut vector = Vector::new(self.size());
@@ -275,47 +116,14 @@ impl<
 
 // *> From
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > From<Vec<K>> for Vector<K>
-{
-    fn from(vec: Vec<K>) -> Self {
+impl From<Vec<f64>> for Vector {
+    fn from(vec: Vec<f64>) -> Self {
         Vector { elements: vec }
     }
 }
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-        const N: usize,
-    > From<[K; N]> for Vector<K>
-{
-    fn from(slice: [K; N]) -> Self {
+impl<const N: usize> From<[f64; N]> for Vector {
+    fn from(slice: [f64; N]) -> Self {
         Vector {
             elements: slice.to_vec(),
         }
@@ -326,24 +134,8 @@ impl<
 
 // * Lerp
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Lerp for Vector<K>
-{
-    fn lerp(a: &Vector<K>, b: &Vector<K>, t: f64) -> Vector<K> {
+impl Lerp for Vector {
+    fn lerp(a: &Vector, b: &Vector, t: f64) -> Vector {
         // if !(0. ..=1.).contains(&t) {
         //     return Err(format!(
         //         "Invalid t value of {}, should be between 0. and 1.",
@@ -365,26 +157,10 @@ impl<
 
 // * Vector
 
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Vector<K>
-{
-    pub fn new(size: usize) -> Vector<K> {
+impl Vector {
+    pub fn new(size: usize) -> Vector {
         Vector {
-            elements: vec![K::default(); size],
+            elements: vec![f64::default(); size],
         }
     }
 
@@ -409,18 +185,18 @@ impl<
 
     // Transform the vector to a Matrix, keeping it's current size
     #[allow(dead_code)]
-    pub fn reshape(&self) -> Matrix<K> {
+    pub fn reshape(&self) -> Matrix {
         Matrix::from(self.elements.clone())
     }
 
     #[allow(dead_code)]
-    pub fn all(&self) -> &Vec<K> {
+    pub fn all(&self) -> &Vec<f64> {
         &self.elements
     }
 
     // Fill the vector with a given value
     #[allow(dead_code)]
-    pub fn fill(&mut self, value: K) {
+    pub fn fill(&mut self, value: f64) {
         for element in self.elements.iter_mut() {
             *element = value
         }
@@ -428,19 +204,19 @@ impl<
 
     // Create an iterator in the direction of the row of the vector
     #[allow(dead_code)]
-    pub fn iter_rows(&self) -> Iter<'_, K> {
+    pub fn iter_rows(&self) -> Iter<'_, f64> {
         self.elements.iter()
     }
 
     // Create an iterator in the direction of the columns of the vector
     #[allow(dead_code)]
-    pub fn iter_cols(&self) -> Iter<'_, K> {
+    pub fn iter_cols(&self) -> Iter<'_, f64> {
         self.elements.iter()
     }
 
     // Apply a function on each of the elements of the vector and return a new vector with the function applied
     #[allow(dead_code)]
-    pub fn map(&self, callback: fn(index: usize, value: K) -> K) -> Result<Vector<K>, String> {
+    pub fn map(&self, callback: fn(index: usize, value: f64) -> f64) -> Result<Vector, String> {
         let size = self.size();
         let mut new_vector = Vector::new(size);
         for column in 0..size {
@@ -453,10 +229,10 @@ impl<
     // Apply a function on each of the elements of two vectors and return a new vector with the function applied
     #[allow(dead_code)]
     pub fn map_tuple<'a>(
-        a: &'a Vector<K>,
-        b: &'a Vector<K>,
-        callback: fn(index: usize, a: K, b: K) -> K,
-    ) -> Result<Vector<K>, String> {
+        a: &'a Vector,
+        b: &'a Vector,
+        callback: fn(index: usize, a: f64, b: f64) -> f64,
+    ) -> Result<Vector, String> {
         let a_size = a.size();
         if a_size != b.size() {
             return Err(format!("Invalid sizes {:?} and {:?}", a_size, b.size()));
@@ -473,7 +249,7 @@ impl<
     // * Subject functions
 
     #[allow(dead_code)]
-    pub fn add(&mut self, b: &Vector<K>) -> Result<(), String> {
+    pub fn add(&mut self, b: &Vector) -> Result<(), String> {
         let size = self.size();
         if size != b.size() {
             return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
@@ -487,7 +263,7 @@ impl<
     }
 
     #[allow(dead_code)]
-    pub fn sub(&mut self, b: &Vector<K>) -> Result<(), String> {
+    pub fn sub(&mut self, b: &Vector) -> Result<(), String> {
         let size = self.size();
         if size != b.size() {
             return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
@@ -501,7 +277,7 @@ impl<
     }
 
     #[allow(dead_code)]
-    pub fn scl(&mut self, value: K) {
+    pub fn scl(&mut self, value: f64) {
         let size = self.size();
         for column in 0..size {
             self[column] *= value
@@ -509,13 +285,13 @@ impl<
     }
 
     #[allow(dead_code)]
-    pub fn dot(&self, b: &Vector<K>) -> K {
+    pub fn dot(&self, b: &Vector) -> f64 {
         let size = self.size();
         if size != b.size() {
-            return K::default();
+            return f64::default();
         }
 
-        let mut result = K::default();
+        let mut result = f64::default();
         for index in 0..size {
             result += self[index] * b[index];
         }

@@ -48,8 +48,8 @@ fn cosine_example_5() {
 
 #[test]
 fn cosine_invalid_empty() {
-    let e1 = Vector::<f64>::from([]);
-    let e2 = Vector::<f64>::from([]);
+    let e1 = Vector::from([]);
+    let e2 = Vector::from([]);
 
     assert_eq!(angle_cos(&e1, &e2), f64::default());
 }

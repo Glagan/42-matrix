@@ -20,6 +20,6 @@ fn matrix_rank_example_3() {
 
 #[test]
 fn matrix_rank_invalid() {
-    let matrix = Matrix::<f64>::new([0, 0]);
+    let matrix = Matrix::new([0, 0]);
     assert_eq!(matrix.rank(), 0);
 }

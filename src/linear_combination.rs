@@ -1,28 +1,6 @@
-use crate::{norm::Norm, vector::Vector};
-use std::{
-    fmt::Debug,
-    ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign},
-};
+use crate::vector::Vector;
 
-pub fn linear_combination<
-    K: Default
-        + Clone
-        + Copy
-        + Debug
-        + PartialEq
-        + AddAssign
-        + SubAssign
-        + MulAssign
-        + Add<Output = K>
-        + Sub<Output = K>
-        + Mul<Output = K>
-        + Div<Output = K>
-        + Mul<f64, Output = K>
-        + Norm,
->(
-    vectors: &[Vector<K>],
-    coeffs: &[K],
-) -> Result<Vector<K>, String> {
+pub fn linear_combination(vectors: &[Vector], coeffs: &[f64]) -> Result<Vector, String> {
     // * Validate
 
     if vectors.is_empty() {
@@ -55,7 +33,7 @@ pub fn linear_combination<
 
     let mut new_vector = Vector::new(size);
     for column in 0..size {
-        let mut value = K::default();
+        let mut value = 0.;
         for (index, vector) in vectors.iter().enumerate() {
             value += vector[column] * coeffs[index];
         }

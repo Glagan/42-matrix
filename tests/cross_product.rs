@@ -32,8 +32,8 @@ fn cross_product_example_3() {
 
 #[test]
 fn cross_product_invalid_empty() {
-    let e1 = Vector::<f64>::from([]);
-    let e2 = Vector::<f64>::from([]);
+    let e1 = Vector::from([]);
+    let e2 = Vector::from([]);
 
     let result = cross_product(&e1, &e2);
     assert_eq!(result.size(), 0);
