@@ -562,6 +562,70 @@ impl Matrix {
                 ]);
     }
 
+    pub fn inverse(&self) -> Result<Matrix, String> {
+        let shape = self.shape();
+        if shape[0] != shape[1] {
+            return Ok(Matrix::new([0, 0]));
+        }
+
+        if shape[0] < 1 {
+            return Ok(Matrix::new([0, 0]));
+        } else if shape[0] < 2 {
+            return Ok(Matrix::clone(self));
+        }
+
+        let mut lead = 0;
+
+        // * Calculate the reduced row echelon form
+        // * -- while updating the augmented matrix
+        let mut reduced = Matrix::clone(self);
+        let mut result = Matrix::identity(shape[0], 1.);
+        for r in 0..shape[0] {
+            if shape[1] <= lead {
+                return Err("Singular matrix".to_string());
+            }
+            let mut i = r;
+            while reduced[i][lead] == 0. {
+                i += 1;
+                if shape[0] == i {
+                    i = r;
+                    lead += 1;
+                    if shape[1] == lead {
+                        return Err("Singular matrix".to_string());
+                    }
+                }
+            }
+
+            let tmp = reduced[i].clone();
+            reduced[i] = reduced[r].clone();
+            reduced[r] = tmp;
+            let tmp = result[i].clone();
+            result[i] = result[r].clone();
+            result[r] = tmp;
+
+            let val = reduced[r][lead];
+            for j in 0..shape[1] {
+                reduced[r][j] = reduced[r][j] / val;
+                result[r][j] = result[r][j] / val;
+            }
+
+            for i in 0..shape[0] {
+                if i == r {
+                    continue;
+                }
+                let val = reduced[i][lead];
+                for j in 0..shape[1] {
+                    reduced[i][j] = reduced[i][j] - val * reduced[r][j];
+                    result[i][j] = result[i][j] - val * result[r][j];
+                }
+            }
+
+            lead += 1;
+        }
+
+        Ok(result)
+    }
+
     pub fn rank(&self) -> usize {
         let shape = self.shape();
 
