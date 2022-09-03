@@ -228,4 +228,14 @@ fn main() {
         [28., -4., 17., 1.],
     ]);
     println!("{} (1032.0)", u.determinant());
+
+    // *
+    println!("\nMatrix rank\n");
+
+    let u = Matrix::from([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]]);
+    println!("{} (3)", u.rank());
+    let u = Matrix::from([[1., 2., 0., 0.], [2., 4., 0., 0.], [-1., 2., 1., 1.]]);
+    println!("{} (2)", u.rank());
+    let u = Matrix::from([[8., 5., -2.], [4., 7., 20.], [7., 6., 1.], [21., 18., 7.]]);
+    println!("{} (3)", u.rank());
 }

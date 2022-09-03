@@ -185,45 +185,11 @@ impl<
             + Div<Output = K>
             + Mul<f64, Output = K>
             + Norm,
-    > Mul for Matrix<K>
+    > Mul<K> for Matrix<K>
 {
     type Output = Matrix<K>;
 
-    fn mul(self, rhs: Self) -> Self::Output {
-        if self.shape() == rhs.shape() {
-            let mut matrix = Matrix::new(self.shape());
-            for x in 0..self.shape()[0] {
-                for y in 0..self.shape()[1] {
-                    matrix[x][y] = self[x][y] * rhs[x][y];
-                }
-            }
-            matrix
-        } else {
-            Matrix::new([0, 0])
-        }
-    }
-}
-
-impl<
-        K: Default
-            + Clone
-            + Copy
-            + Debug
-            + PartialEq
-            + AddAssign
-            + SubAssign
-            + MulAssign
-            + Add<Output = K>
-            + Sub<Output = K>
-            + Mul<Output = K>
-            + Div<Output = K>
-            + Mul<f64, Output = K>
-            + Norm,
-    > Mul<f64> for Matrix<K>
-{
-    type Output = Matrix<K>;
-
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: K) -> Self::Output {
         let mut matrix = Matrix::new(self.shape());
         for x in 0..self.shape()[0] {
             for y in 0..self.shape()[1] {
@@ -617,16 +583,6 @@ impl<
         &self.elements
     }
 
-    // Fill the matrix with a given value
-    #[allow(dead_code)]
-    pub fn fill(&mut self, value: K) {
-        for row in self.elements.iter_mut() {
-            for element in row {
-                *element = value
-            }
-        }
-    }
-
     // Create an iterator in the direction of the rows of the matrix
     #[allow(dead_code)]
     pub fn iter_rows(&self) -> Iter<'_, Vec<K>> {
@@ -877,7 +833,7 @@ impl<
         }
 
         if shape[0] == 2 {
-            return Matrix::determinant_square(self[0][0], self[1][1], self[0][1], self[1][0]);
+            return Matrix::determinant_square(self[0][0], self[0][1], self[1][0], self[1][1]);
         } else if shape[0] == 3 {
             return Matrix::determinant_cube([
                 [self[0][0], self[0][1], self[0][2]],
@@ -910,5 +866,47 @@ impl<
                     [self[2][0], self[2][1], self[2][2]],
                     [self[3][0], self[3][1], self[3][2]],
                 ]);
+    }
+
+    pub fn rank(&self) -> usize {
+        let shape = self.shape();
+
+        // * Calculate the row echelon form (not reduced) with gaussian elimination
+        let mut reduced = self.clone();
+        let mut h = 0;
+        let mut k = 0;
+        while h < shape[0] && k < shape[1] {
+            let mut i_max = h;
+            for i in (h + 1)..shape[0] {
+                if reduced[i][k].abs() > reduced[i_max][k].abs() {
+                    i_max = i;
+                }
+            }
+            if reduced[i_max][k] == K::default() {
+                k += 1;
+            } else {
+                let tmp = reduced[h].clone();
+                reduced[h] = reduced[i_max].clone();
+                reduced[i_max] = tmp;
+                for i in (h + 1)..shape[0] {
+                    let f = reduced[i][k] / reduced[h][k];
+                    reduced[i][k] = K::default();
+                    for j in (k + 1)..shape[1] {
+                        reduced[i][j] = reduced[i][j] - reduced[h][j] * f;
+                    }
+                }
+                h += 1;
+                k += 1;
+            }
+        }
+
+        // * The rank is the number of non-zero rows
+        for r in 0..shape[0] {
+            if reduced[r].iter().find(|&&c| c != K::default()).is_none() {
+                return r;
+            }
+        }
+
+        shape[0]
     }
 }
