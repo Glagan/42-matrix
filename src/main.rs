@@ -211,4 +211,21 @@ fn main() {
         [8., 5., 1., 4., 17.],
     ]);
     println!("{} ([[1., 0.625, 0., 0., -12.1666667], [0., 0., 1., 0., -3.6666667], [0., 0., 0., 1., 29.5]])", u.row_echelon());
+
+    // *
+    println!("\nMatrix determinant\n");
+
+    let u = Matrix::from([[1., -1.], [-1., 1.]]);
+    println!("{} (0.0)", u.determinant());
+    let u = Matrix::from([[2., 0., 0.], [0., 2., 0.], [0., 0., 2.]]);
+    println!("{} (8.0)", u.determinant());
+    let u = Matrix::from([[8., 5., -2.], [4., 7., 20.], [7., 6., 1.]]);
+    println!("{} (-174.0)", u.determinant());
+    let u = Matrix::from([
+        [8., 5., -2., 4.],
+        [4., 2.5, 20., 4.],
+        [8., 5., 1., 4.],
+        [28., -4., 17., 1.],
+    ]);
+    println!("{} (1032.0)", u.determinant());
 }

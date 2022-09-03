@@ -846,4 +846,69 @@ impl<
 
         result
     }
+
+    fn determinant_square(a: K, b: K, c: K, d: K) -> K {
+        return a * d - b * c;
+    }
+
+    fn determinant_cube(values: [[K; 3]; 3]) -> K {
+        return values[0][0]
+            * Matrix::determinant_square(values[1][1], values[1][2], values[2][1], values[2][2])
+            - values[0][1]
+                * Matrix::determinant_square(
+                    values[1][0],
+                    values[2][0],
+                    values[1][2],
+                    values[2][2],
+                )
+            + values[0][2]
+                * Matrix::determinant_square(
+                    values[1][0],
+                    values[2][0],
+                    values[1][1],
+                    values[2][1],
+                );
+    }
+
+    pub fn determinant(&self) -> K {
+        let shape = self.shape();
+        if shape[0] != shape[1] || shape[0] < 2 || shape[0] > 4 {
+            return K::default();
+        }
+
+        if shape[0] == 2 {
+            return Matrix::determinant_square(self[0][0], self[1][1], self[0][1], self[1][0]);
+        } else if shape[0] == 3 {
+            return Matrix::determinant_cube([
+                [self[0][0], self[0][1], self[0][2]],
+                [self[1][0], self[1][1], self[1][2]],
+                [self[2][0], self[2][1], self[2][2]],
+            ]);
+        }
+
+        return self[0][0]
+            * Matrix::determinant_cube([
+                [self[1][1], self[1][2], self[1][3]],
+                [self[2][1], self[2][2], self[2][3]],
+                [self[3][1], self[3][2], self[3][3]],
+            ])
+            - self[0][1]
+                * Matrix::determinant_cube([
+                    [self[1][0], self[1][2], self[1][3]],
+                    [self[2][0], self[2][2], self[2][3]],
+                    [self[3][0], self[3][2], self[3][3]],
+                ])
+            + self[0][2]
+                * Matrix::determinant_cube([
+                    [self[1][0], self[1][1], self[1][3]],
+                    [self[2][0], self[2][1], self[2][3]],
+                    [self[3][0], self[3][1], self[3][3]],
+                ])
+            - self[0][3]
+                * Matrix::determinant_cube([
+                    [self[1][0], self[1][1], self[1][2]],
+                    [self[2][0], self[2][1], self[2][2]],
+                    [self[3][0], self[3][1], self[3][2]],
+                ]);
+    }
 }
