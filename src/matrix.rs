@@ -216,20 +216,14 @@ impl Iterator for TupleIterator<'_> {
 
 impl Lerp for Matrix {
     fn lerp(a: &Self, b: &Self, t: f64) -> Self {
-        // if !(0. ..=1.).contains(&t) {
-        //     return Err(format!(
-        //         "Invalid t value of {}, should be between 0. and 1.",
-        //         t
-        //     ));
-        // }
-
         if a.shape() != b.shape() {
             return Matrix::new([0, 0]);
         }
 
+        let [rows, cols] = a.shape();
         let mut result = Matrix::new(a.shape());
-        for x in 0..a.shape()[0] {
-            for y in 0..a.shape()[1] {
+        for x in 0..rows {
+            for y in 0..cols {
                 result[x][y] = a[x][y] * (1. - t) + b[x][y] * t;
             }
         }
@@ -342,11 +336,11 @@ impl Matrix {
 
     // * Subject functions
 
-    #[allow(dead_code)]
-    pub fn add(&mut self, b: &Matrix) -> Result<(), String> {
+    pub fn add(&mut self, b: &Matrix) {
         let shape = self.shape();
         if shape != b.shape() {
-            return Err(format!("Invalid shapes {:?} and {:?}", shape, b.shape()));
+            // return Err(format!("Invalid shapes {:?} and {:?}", shape, b.shape()));
+            return;
         }
 
         for row in 0..shape[0] {
@@ -354,15 +348,13 @@ impl Matrix {
                 self[row][column] += b[row][column];
             }
         }
-
-        Ok(())
     }
 
-    #[allow(dead_code)]
-    pub fn sub(&mut self, b: &Matrix) -> Result<(), String> {
+    pub fn sub(&mut self, b: &Matrix) {
         let shape = self.shape();
         if shape != b.shape() {
-            return Err(format!("Invalid shapes {:?} and {:?}", shape, b.shape()));
+            // return Err(format!("Invalid shapes {:?} and {:?}", shape, b.shape()));
+            return;
         }
 
         for row in 0..shape[0] {
@@ -370,30 +362,27 @@ impl Matrix {
                 self[row][column] -= b[row][column];
             }
         }
-
-        Ok(())
     }
 
-    #[allow(dead_code)]
     pub fn scl(&mut self, value: f64) {
-        let shape = self.shape();
-        for row in 0..shape[0] {
-            for column in 0..shape[1] {
+        let [rows, cols] = self.shape();
+        for row in 0..rows {
+            for column in 0..cols {
                 self[row][column] *= value;
             }
         }
     }
 
     pub fn mul_vec(&self, vector: &Vector) -> Vector {
-        let shape = self.shape();
-        if shape[1] != vector.size() {
+        let [rows, cols] = self.shape();
+        if cols != vector.size() {
             return Vector::new(0);
         }
 
-        let mut result = Vector::new(shape[0]);
-        for row in 0..shape[0] {
+        let mut result = Vector::new(rows);
+        for row in 0..rows {
             let mut value = 0.;
-            for column in 0..shape[1] {
+            for column in 0..cols {
                 value += self[row][column] * vector[column];
             }
             result[row] = value;
@@ -424,13 +413,13 @@ impl Matrix {
     }
 
     pub fn trace(&self) -> f64 {
-        let shape = self.shape();
-        if shape[0] != shape[1] {
+        let [rows, cols] = self.shape();
+        if rows != cols {
             return 0.;
         }
 
         let mut result = 0.;
-        for i in 0..shape[0] {
+        for i in 0..rows {
             result = result + self[i][i];
         }
 
@@ -438,10 +427,10 @@ impl Matrix {
     }
 
     pub fn transpose(&self) -> Matrix {
-        let shape = self.shape();
-        let mut result = Matrix::new([shape[1], shape[0]]);
-        for row in 0..shape[0] {
-            for column in 0..shape[1] {
+        let [rows, cols] = self.shape();
+        let mut result = Matrix::new([cols, rows]);
+        for row in 0..rows {
+            for column in 0..cols {
                 result[column][row] = self[row][column];
             }
         }
@@ -449,41 +438,39 @@ impl Matrix {
     }
 
     pub fn row_echelon(&self) -> Matrix {
-        let shape = self.shape();
+        let [rows, cols] = self.shape();
         let mut lead = 0;
 
         let mut result = Matrix::clone(self);
-        for r in 0..shape[0] {
-            if shape[1] <= lead {
+        for r in 0..rows {
+            if cols <= lead {
                 return result;
             }
             let mut i = r;
             while result[i][lead] == 0. {
                 i += 1;
-                if shape[0] == i {
+                if rows == i {
                     i = r;
                     lead += 1;
-                    if shape[1] == lead {
+                    if cols == lead {
                         return result;
                     }
                 }
             }
 
-            let tmp = result[i].clone();
-            result[i] = result[r].clone();
-            result[r] = tmp;
+            result.elements.swap(i, r);
 
             let val = result[r][lead];
-            for j in 0..shape[1] {
+            for j in 0..cols {
                 result[r][j] = result[r][j] / val;
             }
 
-            for i in 0..shape[0] {
+            for i in 0..rows {
                 if i == r {
                     continue;
                 }
                 let val = result[i][lead];
-                for j in 0..shape[1] {
+                for j in 0..cols {
                     result[i][j] = result[i][j] - val * result[r][j];
                 }
             }
@@ -522,14 +509,14 @@ impl Matrix {
     }
 
     pub fn determinant(&self) -> f64 {
-        let shape = self.shape();
-        if shape[0] != shape[1] || shape[0] < 2 || shape[0] > 4 {
+        let [rows, cols] = self.shape();
+        if rows != cols || rows < 2 || rows > 4 {
             return 0.;
         }
 
-        if shape[0] == 2 {
+        if rows == 2 {
             return Matrix::determinant_square(self[0][0], self[0][1], self[1][0], self[1][1]);
-        } else if shape[0] == 3 {
+        } else if rows == 3 {
             return Matrix::determinant_cube([
                 [self[0][0], self[0][1], self[0][2]],
                 [self[1][0], self[1][1], self[1][2]],
@@ -564,14 +551,14 @@ impl Matrix {
     }
 
     pub fn inverse(&self) -> Result<Matrix, String> {
-        let shape = self.shape();
-        if shape[0] != shape[1] {
+        let [rows, cols] = self.shape();
+        if rows != cols {
             return Ok(Matrix::new([0, 0]));
         }
 
-        if shape[0] < 1 {
+        if rows < 1 {
             return Ok(Matrix::new([0, 0]));
-        } else if shape[0] < 2 {
+        } else if rows < 2 {
             return Ok(Matrix::clone(self));
         }
 
@@ -580,42 +567,38 @@ impl Matrix {
         // * Calculate the reduced row echelon form
         // * -- while updating the augmented matrix
         let mut reduced = Matrix::clone(self);
-        let mut result = Matrix::identity(shape[0], 1.);
-        for r in 0..shape[0] {
-            if shape[1] <= lead {
+        let mut result = Matrix::identity(rows, 1.);
+        for r in 0..rows {
+            if cols <= lead {
                 return Err("Singular matrix".to_string());
             }
             let mut i = r;
             while reduced[i][lead] == 0. {
                 i += 1;
-                if shape[0] == i {
+                if rows == i {
                     i = r;
                     lead += 1;
-                    if shape[1] == lead {
+                    if cols == lead {
                         return Err("Singular matrix".to_string());
                     }
                 }
             }
 
-            let tmp = reduced[i].clone();
-            reduced[i] = reduced[r].clone();
-            reduced[r] = tmp;
-            let tmp = result[i].clone();
-            result[i] = result[r].clone();
-            result[r] = tmp;
+            reduced.elements.swap(i, r);
+            result.elements.swap(i, r);
 
             let val = reduced[r][lead];
-            for j in 0..shape[1] {
+            for j in 0..cols {
                 reduced[r][j] = reduced[r][j] / val;
                 result[r][j] = result[r][j] / val;
             }
 
-            for i in 0..shape[0] {
+            for i in 0..rows {
                 if i == r {
                     continue;
                 }
                 let val = reduced[i][lead];
-                for j in 0..shape[1] {
+                for j in 0..cols {
                     reduced[i][j] = reduced[i][j] - val * reduced[r][j];
                     result[i][j] = result[i][j] - val * result[r][j];
                 }
@@ -628,15 +611,15 @@ impl Matrix {
     }
 
     pub fn rank(&self) -> usize {
-        let shape = self.shape();
+        let [rows, cols] = self.shape();
 
         // * Calculate the row echelon form (not reduced) with gaussian elimination
         let mut reduced = self.clone();
         let mut h = 0;
         let mut k = 0;
-        while h < shape[0] && k < shape[1] {
+        while h < rows && k < cols {
             let mut i_max = h;
-            for i in (h + 1)..shape[0] {
+            for i in (h + 1)..rows {
                 if reduced[i][k].abs() > reduced[i_max][k].abs() {
                     i_max = i;
                 }
@@ -644,13 +627,11 @@ impl Matrix {
             if reduced[i_max][k] == 0. {
                 k += 1;
             } else {
-                let tmp = reduced[h].clone();
-                reduced[h] = reduced[i_max].clone();
-                reduced[i_max] = tmp;
-                for i in (h + 1)..shape[0] {
+                reduced.elements.swap(h, i_max);
+                for i in (h + 1)..rows {
                     let f = reduced[i][k] / reduced[h][k];
                     reduced[i][k] = 0.;
-                    for j in (k + 1)..shape[1] {
+                    for j in (k + 1)..cols {
                         reduced[i][j] = reduced[i][j] - reduced[h][j] * f;
                     }
                 }
@@ -660,13 +641,8 @@ impl Matrix {
         }
 
         // * The rank is the number of non-zero rows
-        for r in 0..shape[0] {
-            if reduced[r].iter().find(|&&c| c != 0.).is_none() {
-                return r;
-            }
-        }
-
-        shape[0]
+        // -- which is already in `h`
+        h
     }
 
     pub fn projection(fov: f64, ratio: f64, near: f64, far: f64) -> Matrix {

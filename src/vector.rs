@@ -136,13 +136,6 @@ impl<const N: usize> From<[f64; N]> for Vector {
 
 impl Lerp for Vector {
     fn lerp(a: &Vector, b: &Vector, t: f64) -> Vector {
-        // if !(0. ..=1.).contains(&t) {
-        //     return Err(format!(
-        //         "Invalid t value of {}, should be between 0. and 1.",
-        //         t
-        //     ));
-        // }
-
         if a.size() != b.size() {
             return Vector::new(0);
         }
@@ -248,35 +241,30 @@ impl Vector {
 
     // * Subject functions
 
-    #[allow(dead_code)]
-    pub fn add(&mut self, b: &Vector) -> Result<(), String> {
+    pub fn add(&mut self, b: &Vector) {
         let size = self.size();
         if size != b.size() {
-            return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
+            // return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
+            return;
         }
 
         for column in 0..size {
             self[column] += b[column]
         }
-
-        Ok(())
     }
 
-    #[allow(dead_code)]
-    pub fn sub(&mut self, b: &Vector) -> Result<(), String> {
+    pub fn sub(&mut self, b: &Vector) {
         let size = self.size();
         if size != b.size() {
-            return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
+            // return Err(format!("Invalid sizes {:?} and {:?}", size, b.size()));
+            return;
         }
 
         for column in 0..size {
             self[column] -= b[column]
         }
-
-        Ok(())
     }
 
-    #[allow(dead_code)]
     pub fn scl(&mut self, value: f64) {
         let size = self.size();
         for column in 0..size {
@@ -284,7 +272,6 @@ impl Vector {
         }
     }
 
-    #[allow(dead_code)]
     pub fn dot(&self, b: &Vector) -> f64 {
         let size = self.size();
         if size != b.size() {
@@ -298,7 +285,6 @@ impl Vector {
         result
     }
 
-    #[allow(dead_code)]
     pub fn norm_1(&self) -> f64 {
         let mut result = 0.;
         for index in 0..self.size() {
@@ -307,7 +293,6 @@ impl Vector {
         result
     }
 
-    #[allow(dead_code)]
     pub fn norm(&self) -> f64 {
         let mut result = 0.;
         for index in 0..self.size() {
@@ -316,7 +301,6 @@ impl Vector {
         result.powf(0.5)
     }
 
-    #[allow(dead_code)]
     pub fn norm_inf(&self) -> f64 {
         let mut result = 0.;
         if self.size() > 0 {

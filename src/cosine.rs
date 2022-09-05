@@ -6,14 +6,15 @@ pub fn angle_cos(u: &Vector, v: &Vector) -> f64 {
     let v_size = v.size();
 
     if u_size == 0 || v_size == 0 {
-        return 0.; // Err("Empty vectors to transform".to_string());
+        // return Err("Empty vectors to transform".to_string());
+        return 0.;
     }
     if u_size != v_size {
+        // return Err(format!(
+        //     "Invalid vector length, got {} expected {}",
+        //     v_size, u_size
+        // ));
         return 0.;
-        /* Err(format!(
-            "Invalid vector length, got {} expected {}",
-            v_size, u_size
-        )); */
     }
 
     // * Calculate the cosine angle between the vectors

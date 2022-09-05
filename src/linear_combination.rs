@@ -11,14 +11,12 @@ pub fn linear_combination(vectors: &[Vector], coeffs: &[f64]) -> Result<Vector, 
     }
 
     let size = vectors[0].size();
-    for vector in vectors {
-        if vector.size() != size {
-            return Err(format!(
-                "Invalid vector length, got {} expected {}",
-                vector.size(),
-                size
-            ));
-        }
+    if let Some(invalid_vector) = vectors.iter().find(|vector| vector.size() != size) {
+        return Err(format!(
+            "Invalid vector length, got {} expected {}",
+            invalid_vector.size(),
+            size
+        ));
     }
 
     if coeffs.len() != vectors.len() {

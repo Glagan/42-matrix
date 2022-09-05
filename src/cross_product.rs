@@ -6,9 +6,11 @@ pub fn cross_product(u: &Vector, v: &Vector) -> Vector {
     let v_size = v.size();
 
     if u_size != 3 || v_size != 3 {
+        // return Err("Invalid vector length, expected 3".to_string());
         return Vector::new(0);
-        // Err("Invalid vector length, expected 3".to_string());
     }
+
+    // * Simple formula
 
     Vector::from([
         u[1] * v[2] - u[2] * v[1],
