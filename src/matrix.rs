@@ -1,4 +1,5 @@
 use std::{
+    f64::consts::PI,
     fmt::{self, Debug},
     ops::{Add, Index, IndexMut, Mul, Sub},
     slice::Iter,
@@ -666,5 +667,17 @@ impl Matrix {
         }
 
         shape[0]
+    }
+
+    pub fn projection(fov: f64, ratio: f64, near: f64, far: f64) -> Matrix {
+        let s = 1. / (f64::tan((fov / 2.) * (PI / 180.)));
+        let x_scale = if ratio < 1. { ratio } else { 1. };
+        let y_scale = if ratio > 1. { 1. / ratio } else { 1. };
+        Matrix::from([
+            [s * x_scale, 0., 0., 0.],
+            [0., s * y_scale, 0., 0.],
+            [0., 0., -far / (far - near), -1.],
+            [0., 0., -((far * near) / (far - near)), 0.],
+        ])
     }
 }
