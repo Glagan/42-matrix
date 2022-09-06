@@ -485,69 +485,44 @@ impl Matrix {
         self.row_echelon()
     }
 
-    fn determinant_square(a: f64, b: f64, c: f64, d: f64) -> f64 {
-        return a * d - b * c;
-    }
-
-    fn determinant_cube(values: [[f64; 3]; 3]) -> f64 {
-        return values[0][0]
-            * Matrix::determinant_square(values[1][1], values[1][2], values[2][1], values[2][2])
-            - values[0][1]
-                * Matrix::determinant_square(
-                    values[1][0],
-                    values[2][0],
-                    values[1][2],
-                    values[2][2],
-                )
-            + values[0][2]
-                * Matrix::determinant_square(
-                    values[1][0],
-                    values[2][0],
-                    values[1][1],
-                    values[2][1],
-                );
-    }
-
+    // Use the Bareiss algorithm to find the determinant
     pub fn determinant(&self) -> f64 {
         let [rows, cols] = self.shape();
-        if rows != cols || rows < 2 || rows > 4 {
+        if rows != cols || rows < 2 {
             return 0.;
         }
 
-        if rows == 2 {
-            return Matrix::determinant_square(self[0][0], self[0][1], self[1][0], self[1][1]);
-        } else if rows == 3 {
-            return Matrix::determinant_cube([
-                [self[0][0], self[0][1], self[0][2]],
-                [self[1][0], self[1][1], self[1][2]],
-                [self[2][0], self[2][1], self[2][2]],
-            ]);
+        let mut sign = 1.;
+        let mut matrix = self.clone();
+        for k in 0..(rows - 1) {
+            // Pivot row swap if needed
+            if matrix[k][k] == 0. {
+                let mut m = k + 1;
+                while m < rows {
+                    if matrix[m][k] != 0. {
+                        matrix.elements.swap(m, k);
+                        sign = -sign;
+                        break;
+                    }
+                    m += 1;
+                }
+                if m == rows {
+                    return 0.;
+                }
+            }
+
+            // Formula
+            for i in (k + 1)..rows {
+                for j in (k + 1)..cols {
+                    matrix[i][j] = matrix[k][k] * matrix[i][j] - matrix[i][k] * matrix[k][j];
+                    if k != 0 {
+                        matrix[i][j] = matrix[i][j] / matrix[k - 1][k - 1];
+                    }
+                }
+            }
         }
 
-        return self[0][0]
-            * Matrix::determinant_cube([
-                [self[1][1], self[1][2], self[1][3]],
-                [self[2][1], self[2][2], self[2][3]],
-                [self[3][1], self[3][2], self[3][3]],
-            ])
-            - self[0][1]
-                * Matrix::determinant_cube([
-                    [self[1][0], self[1][2], self[1][3]],
-                    [self[2][0], self[2][2], self[2][3]],
-                    [self[3][0], self[3][2], self[3][3]],
-                ])
-            + self[0][2]
-                * Matrix::determinant_cube([
-                    [self[1][0], self[1][1], self[1][3]],
-                    [self[2][0], self[2][1], self[2][3]],
-                    [self[3][0], self[3][1], self[3][3]],
-                ])
-            - self[0][3]
-                * Matrix::determinant_cube([
-                    [self[1][0], self[1][1], self[1][2]],
-                    [self[2][0], self[2][1], self[2][2]],
-                    [self[3][0], self[3][1], self[3][2]],
-                ]);
+        sign * matrix[rows - 1][rows - 1]
     }
 
     pub fn inverse(&self) -> Result<Matrix, String> {
