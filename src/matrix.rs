@@ -420,7 +420,7 @@ impl Matrix {
 
         let mut result = 0.;
         for i in 0..rows {
-            result = result + self[i][i];
+            result += self[i][i];
         }
 
         result
@@ -462,7 +462,7 @@ impl Matrix {
 
             let val = result[r][lead];
             for j in 0..cols {
-                result[r][j] = result[r][j] / val;
+                result[r][j] /= val;
             }
 
             for i in 0..rows {
@@ -471,7 +471,7 @@ impl Matrix {
                 }
                 let val = result[i][lead];
                 for j in 0..cols {
-                    result[i][j] = result[i][j] - val * result[r][j];
+                    result[i][j] -= val * result[r][j];
                 }
             }
 
@@ -488,8 +488,12 @@ impl Matrix {
     // Use the Bareiss algorithm to find the determinant
     pub fn determinant(&self) -> f64 {
         let [rows, cols] = self.shape();
-        if rows != cols || rows < 2 {
+        if rows != cols {
             return 0.;
+        }
+
+        if rows == 1 {
+            return self[0][0];
         }
 
         let mut sign = 1.;
@@ -516,7 +520,7 @@ impl Matrix {
                 for j in (k + 1)..cols {
                     matrix[i][j] = matrix[k][k] * matrix[i][j] - matrix[i][k] * matrix[k][j];
                     if k != 0 {
-                        matrix[i][j] = matrix[i][j] / matrix[k - 1][k - 1];
+                        matrix[i][j] /= matrix[k - 1][k - 1];
                     }
                 }
             }
@@ -564,8 +568,8 @@ impl Matrix {
 
             let val = reduced[r][lead];
             for j in 0..cols {
-                reduced[r][j] = reduced[r][j] / val;
-                result[r][j] = result[r][j] / val;
+                reduced[r][j] /= val;
+                result[r][j] /= val;
             }
 
             for i in 0..rows {
@@ -574,8 +578,8 @@ impl Matrix {
                 }
                 let val = reduced[i][lead];
                 for j in 0..cols {
-                    reduced[i][j] = reduced[i][j] - val * reduced[r][j];
-                    result[i][j] = result[i][j] - val * result[r][j];
+                    reduced[i][j] -= val * reduced[r][j];
+                    result[i][j] -= val * result[r][j];
                 }
             }
 
@@ -607,7 +611,7 @@ impl Matrix {
                     let f = reduced[i][k] / reduced[h][k];
                     reduced[i][k] = 0.;
                     for j in (k + 1)..cols {
-                        reduced[i][j] = reduced[i][j] - reduced[h][j] * f;
+                        reduced[i][j] -= reduced[h][j] * f;
                     }
                 }
                 h += 1;
